@@ -19,4 +19,12 @@ public class Room {
     public Room(String screenName) {
         this.screenName = screenName;
     }
+
+    public String getScreenName() {
+        return screenName;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
 }

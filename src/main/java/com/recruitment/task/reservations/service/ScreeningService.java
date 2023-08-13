@@ -1,6 +1,7 @@
 package com.recruitment.task.reservations.service;
 
 import com.recruitment.task.reservations.dto.MoviePreviewDto;
+import com.recruitment.task.reservations.dto.ScreeningDetailsDto;
 import com.recruitment.task.reservations.dto.ScreeningDto;
 import com.recruitment.task.reservations.entity.Screening;
 import com.recruitment.task.reservations.repository.ScreeningRepository;
@@ -24,5 +25,9 @@ public class ScreeningService {
 
     private static ScreeningDto createScreeningDto(Screening screening) {
         return new ScreeningDto(screening.getId(), screening.getStartTime(), new MoviePreviewDto(screening.getMovie().getTitle()));
+    }
+
+    public ScreeningDetailsDto getScreeningDetailAndAvaibleSeats(long l) {
+return null;
     }
 }
