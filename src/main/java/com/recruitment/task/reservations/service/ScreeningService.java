@@ -1,6 +1,8 @@
 package com.recruitment.task.reservations.service;
 
+import com.recruitment.task.reservations.dto.MoviePreviewDto;
 import com.recruitment.task.reservations.dto.ScreeningDto;
+import com.recruitment.task.reservations.entity.Screening;
 import com.recruitment.task.reservations.repository.ScreeningRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,11 @@ public class ScreeningService {
     }
 
     public List<ScreeningDto> getAllScreeningsFromDateAndTime(LocalDateTime chosenTime) {
-        //todo: użyć repo żeby wyciągnąć wszystkie filmy, wifiltorować te po dacie która została podana do końca dnia
-        return null;
+        List<Screening> screenings = screeningRepository.findScreeningsAfterTime(chosenTime);
+        return screenings.stream().map((ScreeningService::createScreeningDto)).toList();
+    }
+
+    private static ScreeningDto createScreeningDto(Screening screening) {
+        return new ScreeningDto(screening.getId(), screening.getStartTime(), new MoviePreviewDto(screening.getMovie().getTitle()));
     }
 }

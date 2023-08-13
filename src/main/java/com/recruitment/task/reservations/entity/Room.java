@@ -13,6 +13,8 @@ public class Room {
 
     private String screenName;
 
+    public Room() {
+    }
 
     public Room(String screenName) {
         this.screenName = screenName;
