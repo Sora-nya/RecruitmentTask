@@ -88,7 +88,7 @@ class ScreeningServiceTest {
                 new Seat(room1, 10, 2)));
         // when
 
-        ScreeningDetailsDto screening = screeningService.getScreeningDetailAndAvaibleSeats(1L);
+        ScreeningDetailsDto screening = screeningService.getScreeningRoomAndAvailableSeats(1L);
 
         // then
 
