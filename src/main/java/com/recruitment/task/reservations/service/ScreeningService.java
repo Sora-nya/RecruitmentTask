@@ -1,17 +1,14 @@
 package com.recruitment.task.reservations.service;
 
-import com.recruitment.task.reservations.dto.MoviePreviewDto;
-import com.recruitment.task.reservations.dto.ScreeningDetailsDto;
-import com.recruitment.task.reservations.dto.ScreeningDto;
-import com.recruitment.task.reservations.entity.Room;
+import com.recruitment.task.reservations.dto.*;
 import com.recruitment.task.reservations.entity.Screening;
-import com.recruitment.task.reservations.entity.Seat;
 import com.recruitment.task.reservations.repository.ScreeningRepository;
 import com.recruitment.task.reservations.repository.SeatRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ScreeningService {
@@ -34,9 +31,11 @@ public class ScreeningService {
 
     public ScreeningDetailsDto getScreeningRoomAndAvailableSeats(long screeningId) {
         Screening screening = screeningRepository.findById(screeningId).orElseThrow();
-        Room screeningRoom = screening.getRoom();
-        List<Seat> seats = seatRepository.findAvailableSeatsForScreeningRoom(screeningRoom,screening);
-        return new ScreeningDetailsDto(screeningRoom,seats);
+        RoomDto screeningRoom = new RoomDto(screening.getRoom().getId(), screening.getRoom().getScreenName());
+        List<SeatDto> seats = seatRepository.findAvailableSeatsForScreeningRoom(screening.getRoom(), screening).stream()
+                .map(seat -> new SeatDto(seat.getId(), seat.getRowNumber(), seat.getSeatNumber()))
+                .collect(Collectors.toList());
+        return new ScreeningDetailsDto(screeningRoom, seats);
     }
 
 

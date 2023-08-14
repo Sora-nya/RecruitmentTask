@@ -84,6 +84,7 @@ class ScreeningServiceTest {
     @Test
     void get_screening_details_and_avaible_seats() {
         // given
+
         seatRepository.saveAll(List.of(new Seat(room1, 10, 1),
                 new Seat(room1, 10, 2)));
         // when
@@ -92,7 +93,7 @@ class ScreeningServiceTest {
 
         // then
 
-        assertThat(screening.screeningRoom().getScreenName()).isEqualTo("Sala 1");
+        assertThat(screening.screeningRoom().screenName()).isEqualTo("Sala 1");
         assertThat(screening.avaibleSeats()).isNotEmpty();
 
     }

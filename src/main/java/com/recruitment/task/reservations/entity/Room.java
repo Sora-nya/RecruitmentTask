@@ -27,4 +27,8 @@ public class Room {
     public void setScreenName(String screenName) {
         this.screenName = screenName;
     }
+
+    public Long getId() {
+        return id;
+    }
 }
