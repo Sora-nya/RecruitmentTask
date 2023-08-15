@@ -78,8 +78,38 @@ class ScreeningServiceTest {
 
     }
 
-    //todo: napisać testy sprawdzajace czy nie zwraca niepoprawnych danych po dodanej dacie
-    // sprawdzić czy nie zwraca źle posortowanych danych
+    @Test
+    void get_not_all_screenings_in_time_interval() {
+        // given
+        MoviePreviewDto moviePreviewDtoOppenheimer = new MoviePreviewDto("Oppenheimer");
+        ScreeningDto screeningDto2 = new ScreeningDto(2L, OppenheimerTime, moviePreviewDtoOppenheimer);
+        // when
+
+        List<ScreeningDto> screenings = screeningService.getAllScreeningsFromDateAndTime(LocalDateTime.of(2023, 8, 12, 16, 20));
+
+        // then
+
+        assertThat(screenings).containsExactly(screeningDto2);
+
+    }
+    @Test
+    void screenings_should_be_sorted_by_name_and_start_time() {
+        // given
+        screeningRepository.save(new Screening(movieRepository.findById(1L).orElseThrow(), room1, LocalDateTime.of(2023,8,12,20,0)));
+        MoviePreviewDto moviePreviewDtoBarbie = new MoviePreviewDto("Barbie");
+        MoviePreviewDto moviePreviewDtoOppenheimer = new MoviePreviewDto("Oppenheimer");
+        ScreeningDto screeningDto1 = new ScreeningDto(1L, BarbieTime, moviePreviewDtoBarbie);
+        ScreeningDto screeningDto2 = new ScreeningDto(2L, OppenheimerTime, moviePreviewDtoOppenheimer);
+        ScreeningDto screeningDto3 = new ScreeningDto(3L, LocalDateTime.of(2023,8,12,20,0), moviePreviewDtoBarbie);
+        // when
+
+        List<ScreeningDto> screenings = screeningService.getAllScreeningsFromDateAndTime(LocalDateTime.of(2023, 8, 12, 15, 20));
+
+        // then
+
+        assertThat(screenings).containsExactly(screeningDto1,screeningDto3, screeningDto2);
+
+    }
 
     @Test
     void get_screening_details_and_avaible_seats() {
