@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
@@ -44,11 +45,12 @@ class ScreeningServiceTest {
     private final LocalDateTime OppenheimerTime = LocalDateTime.of(2023, 8, 12, 16, 30);
 
     private Room room1 = new Room("Sala 1");
+    private Movie barbieMovie = new Movie("Barbie");
 
     @BeforeEach
     void setUp() {
-        var barbieMovie = movieRepository.save(new Movie("Barbie"));
         var oppenheimerMovie = movieRepository.save(new Movie("Oppenheimer"));
+        movieRepository.save(barbieMovie);
         var room2 = roomRepository.save(new Room("Sala 2"));
         roomRepository.save(room1);
 
@@ -58,7 +60,12 @@ class ScreeningServiceTest {
 
     @AfterEach
     void tearDown() {
+
         screeningRepository.deleteAll();
+        movieRepository.deleteAll();
+
+        seatRepository.deleteAll();
+        roomRepository.deleteAll();
     }
 
     @Test
@@ -74,7 +81,13 @@ class ScreeningServiceTest {
 
         // then
 
-        assertThat(screenings).containsExactly(screeningDto1, screeningDto2);
+        assertThat(screenings)
+                .hasSize(2)
+                .extracting(ScreeningDto::time, screeningDto -> screeningDto.moviePreviewDto().title())
+                .containsExactly(
+                                tuple(screeningDto1.time(), screeningDto1.moviePreviewDto().title()),
+                                tuple(screeningDto2.time(), screeningDto2.moviePreviewDto().title())
+                        );
 
     }
 
@@ -89,13 +102,18 @@ class ScreeningServiceTest {
 
         // then
 
-        assertThat(screenings).containsExactly(screeningDto2);
+        assertThat(screenings)
+                .hasSize(1)
+                .extracting(ScreeningDto::time, screeningDto -> screeningDto.moviePreviewDto().title())
+                .containsExactly(
+                        tuple(screeningDto2.time(), screeningDto2.moviePreviewDto().title())
+                );
 
     }
     @Test
     void screenings_should_be_sorted_by_name_and_start_time() {
         // given
-        screeningRepository.save(new Screening(movieRepository.findById(1L).orElseThrow(), room1, LocalDateTime.of(2023,8,12,20,0)));
+        screeningRepository.save(new Screening(barbieMovie, room1, LocalDateTime.of(2023,8,12,20,0)));
         MoviePreviewDto moviePreviewDtoBarbie = new MoviePreviewDto("Barbie");
         MoviePreviewDto moviePreviewDtoOppenheimer = new MoviePreviewDto("Oppenheimer");
         ScreeningDto screeningDto1 = new ScreeningDto(1L, BarbieTime, moviePreviewDtoBarbie);
@@ -107,7 +125,14 @@ class ScreeningServiceTest {
 
         // then
 
-        assertThat(screenings).containsExactly(screeningDto1,screeningDto3, screeningDto2);
+        assertThat(screenings)
+                .hasSize(3)
+                .extracting(ScreeningDto::time, screeningDto -> screeningDto.moviePreviewDto().title())
+                .containsExactly(
+                        tuple(screeningDto1.time(), screeningDto1.moviePreviewDto().title()),
+                        tuple(screeningDto3.time(), screeningDto3.moviePreviewDto().title()),
+                        tuple(screeningDto2.time(), screeningDto2.moviePreviewDto().title())
+                );
 
     }
 
